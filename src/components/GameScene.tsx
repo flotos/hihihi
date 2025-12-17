@@ -77,10 +77,11 @@ export function GameScene({
             key={`neutral-${placed.id}`}
             src={sprite.imageUrl}
             alt="Distractor"
-            className="neutral-sprite"
+            className={`neutral-sprite ${jumpActive ? 'jumping' : ''}`}
             style={{
               left: `${placed.x}%`,
               top: `${placed.y}%`,
+              animationDelay: jumpActive ? `${jumpDelays[`neutral-${placed.id}`]}s` : undefined,
             }}
           />
         );
@@ -95,10 +96,11 @@ export function GameScene({
             key={`dog-${dog.id}`}
             src={sprite.imageUrl}
             alt={sprite.name}
-            className={`hidden-dog ${dog.found ? 'found' : ''}`}
+            className={`hidden-dog ${dog.found ? 'found' : ''} ${jumpActive ? 'jumping' : ''}`}
             style={{
               left: `${dog.x}%`,
               top: `${dog.y}%`,
+              animationDelay: jumpActive ? `${jumpDelays[`dog-${dog.id}`]}s` : undefined,
             }}
           />
         );

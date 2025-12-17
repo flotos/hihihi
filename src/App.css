@@ -301,6 +301,77 @@ html, body, #root {
   }
 }
 
+/* Giant key in win message */
+.win-message .giant-key-emoji {
+  font-size: 8rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+  animation: keyBounce 1s ease-in-out infinite, keyGlow 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+}
+
+@keyframes keyBounce {
+  0%, 100% {
+    transform: scale(1) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes keyGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(255, 215, 0, 1)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.6));
+  }
+}
+
+/* Subtext in win message */
+.win-message .win-subtext {
+  font-size: 1.5rem;
+  color: #ffffff;
+  margin-top: 1rem;
+  margin-bottom: 0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  font-style: italic;
+}
+
+/* Jump animation for button B */
+.hidden-dog.jumping,
+.neutral-sprite.jumping {
+  animation: sprite-jump 0.5s ease-out forwards;
+}
+
+.item-list-item.jumping {
+  animation: item-jump 0.5s ease-out forwards;
+}
+
+@keyframes sprite-jump {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+  40% {
+    transform: translate(-50%, -70%);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes item-jump {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 /* Responsive adjustments for tamagotchi */
 @media (max-width: 600px) {
   .game-scene {

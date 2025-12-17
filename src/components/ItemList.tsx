@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
 import type { DogSprite, HiddenDog } from '../types/game';
 
 interface ItemListProps {
   sprites: DogSprite[];
   hiddenDogs: HiddenDog[];
+  jumpActive?: boolean;
 }
 
-export function ItemList({ sprites, hiddenDogs }: ItemListProps) {
+export function ItemList({ sprites, hiddenDogs, jumpActive = false }: ItemListProps) {
   const foundCount = hiddenDogs.filter((dog) => dog.found).length;
   const totalCount = hiddenDogs.length;
 
@@ -14,6 +16,11 @@ export function ItemList({ sprites, hiddenDogs }: ItemListProps) {
   hiddenDogs.forEach((dog) => {
     foundStatus.set(dog.spriteId, dog.found);
   });
+
+  // Generate random delays for jump animation
+  const jumpDelays = useMemo(() => {
+    return sprites.map(() => Math.random() * 0.3);
+  }, [sprites.length]);
 
   return (
     <div className="item-list">
@@ -24,12 +31,15 @@ export function ItemList({ sprites, hiddenDogs }: ItemListProps) {
         </div>
       </div>
       <div className="item-list-items">
-        {sprites.map((sprite) => {
+        {sprites.map((sprite, index) => {
           const isFound = foundStatus.get(sprite.id) ?? false;
           return (
             <div
               key={sprite.id}
-              className={`item-list-item ${isFound ? 'found' : ''}`}
+              className={`item-list-item ${isFound ? 'found' : ''} ${jumpActive ? 'jumping' : ''}`}
+              style={{
+                animationDelay: jumpActive ? `${jumpDelays[index]}s` : undefined,
+              }}
             >
               <img
                 src={sprite.imageUrl}
