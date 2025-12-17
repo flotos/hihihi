@@ -16,6 +16,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showLoveMessage, setShowLoveMessage] = useState(false);
   const [currentDogNumber, setCurrentDogNumber] = useState(0);
+  const [jumpActive, setJumpActive] = useState(false);
 
   const foundCount = hiddenDogs.filter((dog) => dog.found).length;
   const totalCount = hiddenDogs.length;
@@ -97,6 +98,11 @@ function App() {
     setShowLoveMessage(false);
   }, []);
 
+  const handleButtonB = useCallback(() => {
+    setJumpActive(true);
+    setTimeout(() => setJumpActive(false), 800);
+  }, []);
+
   if (loading) {
     return (
       <div className="loading">
@@ -107,7 +113,7 @@ function App() {
 
   return (
     <div className="app">
-      <Tamagotchi foundCount={foundCount} totalCount={totalCount}>
+      <Tamagotchi foundCount={foundCount} totalCount={totalCount} onButtonB={handleButtonB}>
         <div className="tamagotchi-game-layout">
           <GameScene
             sprites={sprites}
@@ -115,8 +121,9 @@ function App() {
             neutralSprites={neutralSprites}
             placedNeutrals={placedNeutrals}
             onDogFound={handleDogFound}
+            jumpActive={jumpActive}
           />
-          <ItemList sprites={sprites} hiddenDogs={hiddenDogs} />
+          <ItemList sprites={sprites} hiddenDogs={hiddenDogs} jumpActive={jumpActive} />
         </div>
       </Tamagotchi>
 
@@ -145,7 +152,9 @@ function App() {
           </div>
           <div className="win-message">
             <div className="message-hearts-top">💕💕💕💕💕</div>
-            <h1 className="love-text final-message">Non mais t'a été vraiment trop forte, bravo t'a tout gagnée</h1>
+            <div className="giant-key-emoji">🔑</div>
+            <h1 className="love-text final-message">Tu as gagnée la clé bleue !</h1>
+            <p className="win-subtext">Non mais t'a été vraiment trop forte, bravo t'a tout gagnée</p>
             <div className="message-hearts-bottom">💖💖💖💖💖</div>
           </div>
         </div>

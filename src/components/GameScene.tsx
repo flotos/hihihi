@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { DogSprite, HiddenDog, NeutralSprite, PlacedNeutralSprite } from '../types/game';
 
 interface GameSceneProps {
@@ -6,6 +7,7 @@ interface GameSceneProps {
   neutralSprites: NeutralSprite[];
   placedNeutrals: PlacedNeutralSprite[];
   onDogFound: (dogId: number) => void;
+  jumpActive?: boolean;
 }
 
 export function GameScene({
@@ -14,6 +16,7 @@ export function GameScene({
   neutralSprites,
   placedNeutrals,
   onDogFound,
+  jumpActive = false,
 }: GameSceneProps) {
   // Create a map of spriteId to sprite for quick lookup
   const spriteMap = new Map<number, DogSprite>();
@@ -26,6 +29,18 @@ export function GameScene({
   neutralSprites.forEach((sprite) => {
     neutralSpriteMap.set(sprite.id, sprite);
   });
+
+  // Generate random delays for jump animation (organic feel)
+  const jumpDelays = useMemo(() => {
+    const delays: Record<string, number> = {};
+    hiddenDogs.forEach((dog) => {
+      delays[`dog-${dog.id}`] = Math.random() * 0.3;
+    });
+    placedNeutrals.forEach((neutral) => {
+      delays[`neutral-${neutral.id}`] = Math.random() * 0.3;
+    });
+    return delays;
+  }, [hiddenDogs.length, placedNeutrals.length]);
 
   const handleSceneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
