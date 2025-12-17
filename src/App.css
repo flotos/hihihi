@@ -33,16 +33,20 @@ html, body, #root {
 .game-container {
   display: flex;
   height: 100%;
-  width: 100%;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 /* Game scene */
 .game-scene {
-  flex: 1;
+  width: 800px;
+  height: 800px;
+  min-width: 800px;
+  min-height: 800px;
   position: relative;
   overflow: hidden;
   cursor: crosshair;
-  background-color: #1a2e1a;
+  background-color: #5a8a5a;
 }
 
 /* Hidden dogs in scene */
@@ -120,7 +124,7 @@ html, body, #root {
   overflow-y: auto;
   padding: 1rem;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   align-content: start;
 }
@@ -133,12 +137,14 @@ html, body, #root {
   padding: 0.5rem;
   background-color: #0d1f0d;
   border-radius: 8px;
-  transition: background-color 0.2s ease, opacity 0.3s ease;
+  transition: background-color 0.2s ease, opacity 0.3s ease, filter 0.3s ease;
+  filter: blur(5px);
 }
 
 .item-list-item.found {
-  opacity: 0.5;
+  opacity: 1;
   background-color: #0d4d0d;
+  filter: none;
 }
 
 .item-sprite {
@@ -164,7 +170,7 @@ html, body, #root {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(34, 197, 94, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,10 +191,12 @@ html, body, #root {
   text-align: center;
   color: #ffffff;
   padding: 3rem;
-  background: linear-gradient(135deg, #0d1f0d 0%, #0a2a0a 100%);
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
   border-radius: 20px;
-  border: 3px solid #22c55e;
-  box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+  border: 3px solid #ff69b4;
+  box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+  z-index: 2;
+  position: relative;
 }
 
 .win-message h1 {
@@ -204,20 +212,94 @@ html, body, #root {
   color: #e0e0e0;
 }
 
-.win-message button {
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  background-color: #22c55e;
-  color: #ffffff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+/* Confetti container */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.win-message button:hover {
-  background-color: #4ade80;
-  transform: scale(1.05);
+.confetti {
+  position: absolute;
+  top: -20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  animation: confetti-fall linear infinite;
+  transform: rotate(0deg);
+}
+
+.confetti:nth-child(odd) {
+  width: 8px;
+  height: 16px;
+}
+
+.confetti:nth-child(3n) {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+@keyframes confetti-fall {
+  0% {
+    top: -20px;
+    transform: rotate(0deg) translateX(0);
+    opacity: 1;
+  }
+  25% {
+    transform: rotate(90deg) translateX(30px);
+  }
+  50% {
+    transform: rotate(180deg) translateX(-30px);
+  }
+  75% {
+    transform: rotate(270deg) translateX(30px);
+  }
+  100% {
+    top: 100vh;
+    transform: rotate(360deg) translateX(0);
+    opacity: 0.8;
+  }
+}
+
+/* Final message styling */
+.win-message .message-hearts-top,
+.win-message .message-hearts-bottom {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+  animation: pulse-hearts 1s ease-in-out infinite;
+}
+
+.win-message .love-text.final-message {
+  font-size: 2.5rem;
+  color: #ff69b4;
+  text-shadow: 2px 2px 8px rgba(255, 105, 180, 0.5);
+  animation: glow-text 2s ease-in-out infinite alternate;
+  line-height: 1.3;
+  max-width: 600px;
+}
+
+@keyframes pulse-hearts {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes glow-text {
+  from {
+    text-shadow: 2px 2px 8px rgba(255, 105, 180, 0.5);
+  }
+  to {
+    text-shadow: 2px 2px 20px rgba(255, 105, 180, 0.9), 0 0 30px rgba(255, 105, 180, 0.7);
+  }
 }
 
 /* Responsive adjustments */

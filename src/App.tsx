@@ -96,10 +96,6 @@ function App() {
     setShowLoveMessage(false);
   }, []);
 
-  const handlePlayAgain = () => {
-    window.location.reload();
-  };
-
   if (loading) {
     return (
       <div className="loading">
@@ -130,10 +126,24 @@ function App() {
 
       {isComplete && (
         <div className="win-overlay">
+          <div className="confetti-container">
+            {Array.from({ length: 150 }).map((_, i) => (
+              <div
+                key={i}
+                className="confetti"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 5}s`,
+                  animationDuration: `${3 + Math.random() * 4}s`,
+                  backgroundColor: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff6600', '#9900ff', '#ff69b4', '#32cd32'][Math.floor(Math.random() * 10)],
+                }}
+              />
+            ))}
+          </div>
           <div className="win-message">
-            <h1>Congratulations!</h1>
-            <p>You found all {totalCount} dogs!</p>
-            <button onClick={handlePlayAgain}>Play Again</button>
+            <div className="message-hearts-top">💕💕💕💕💕</div>
+            <h1 className="love-text final-message">Non mais t'a été vraiment trop forte, bravo t'a tout gagnée</h1>
+            <div className="message-hearts-bottom">💖💖💖💖💖</div>
           </div>
         </div>
       )}

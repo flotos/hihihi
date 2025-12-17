@@ -2,7 +2,7 @@
 export const SPRITES_TO_FIND_COUNT = 1;
 
 /** Number of neutral/distractor spritesheets to load (neutral/01.png, neutral/02.png, etc.) */
-export const SPRITES_NEUTRAL_COUNT = 1;
+export const SPRITES_NEUTRAL_COUNT = 4;
 
 export interface ProcessedSprites {
   sprites: string[]; // Array of data URLs
