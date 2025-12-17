@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(dir /b)",
+      "Bash(dir /b \"C:\\Users\\FLORIAN\\Documents\\hihihi\")",
+      "Bash(npx tsc:*)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
