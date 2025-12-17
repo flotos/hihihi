@@ -3,6 +3,7 @@ import './App.css';
 import { GameScene } from './components/GameScene';
 import { ItemList } from './components/ItemList';
 import { LoveMessage } from './components/LoveMessage';
+import { Tamagotchi } from './components/Tamagotchi';
 import { loadSpritesToFind, loadNeutralSprites } from './utils/spritesheet';
 import { dogPositions, neutralPositions } from './data/dogPositions';
 import type { DogSprite, HiddenDog, NeutralSprite, PlacedNeutralSprite } from './types/game';
@@ -106,16 +107,18 @@ function App() {
 
   return (
     <div className="app">
-      <div className="game-container">
-        <GameScene
-          sprites={sprites}
-          hiddenDogs={hiddenDogs}
-          neutralSprites={neutralSprites}
-          placedNeutrals={placedNeutrals}
-          onDogFound={handleDogFound}
-        />
-        <ItemList sprites={sprites} hiddenDogs={hiddenDogs} />
-      </div>
+      <Tamagotchi foundCount={foundCount} totalCount={totalCount}>
+        <div className="tamagotchi-game-layout">
+          <GameScene
+            sprites={sprites}
+            hiddenDogs={hiddenDogs}
+            neutralSprites={neutralSprites}
+            placedNeutrals={placedNeutrals}
+            onDogFound={handleDogFound}
+          />
+          <ItemList sprites={sprites} hiddenDogs={hiddenDogs} />
+        </div>
+      </Tamagotchi>
 
       {showLoveMessage && currentDogNumber > 0 && (
         <LoveMessage

@@ -16,7 +16,7 @@ const LOVE_MESSAGES = [
   "Ohhh darling my dear dear love ohh yeaaaah !",
   "CHOUPINETTE !",
   "gnoooo <3",
-  "Non mais t'a été vraiment trop forte, bravo t'a tout gagnée",
+  "Tu as gagnée la clé bleue !",
 ];
 
 // Heart types for variety
@@ -96,7 +96,14 @@ export function LoveMessage({ dogNumber, onComplete }: LoveMessageProps) {
         <div className="message-hearts-top">
           {"💕".repeat(Math.min(dogNumber, 5))}
         </div>
-        <h1 className="love-text">{message}</h1>
+        {messageIndex === LOVE_MESSAGES.length - 1 ? (
+          <>
+            <div className="giant-key-emoji">🔑</div>
+            <h1 className="love-text">{message}</h1>
+          </>
+        ) : (
+          <h1 className="love-text">{message}</h1>
+        )}
         <div className="message-hearts-bottom">
           {"💖".repeat(Math.min(dogNumber, 5))}
         </div>
