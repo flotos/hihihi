@@ -41,7 +41,7 @@ html, body, #root {
 /* Game scene - scaled to fit tamagotchi screen */
 .game-scene {
   width: 100%;
-  height: 280px;
+  height: 468px;
   position: relative;
   overflow: hidden;
   cursor: crosshair;
@@ -53,8 +53,8 @@ html, body, #root {
 /* Hidden dogs in scene */
 .hidden-dog {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  width: 69px;
+  height: 69px;
   transform: translate(-50%, -50%);
   opacity: 1;
   transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
@@ -65,7 +65,7 @@ html, body, #root {
 }
 
 .hidden-dog.found {
-  opacity: 1;
+  opacity: 0.5;
   filter: sepia(20%) saturate(70%) brightness(1.1) drop-shadow(0 0 4px #306230) drop-shadow(0 0 8px #0f380f);
   animation: dogFound 0.5s ease;
 }
@@ -85,8 +85,8 @@ html, body, #root {
 /* Neutral/distractor sprites in scene */
 .neutral-sprite {
   position: absolute;
-  width: 60px;
-  height: 60px;
+  width: 69px;
+  height: 69px;
   transform: translate(-50%, -50%);
   opacity: 1;
   pointer-events: none;
@@ -98,14 +98,14 @@ html, body, #root {
 /* Item list - horizontal strip at bottom of tamagotchi screen */
 .item-list {
   width: 100%;
-  height: 70px;
+  height: 104px;
   background-color: rgba(15, 56, 15, 0.4);
   display: flex;
   flex-direction: row;
   align-items: center;
   border-top: 2px solid #306230;
-  padding: 5px;
-  gap: 5px;
+  padding: 6px;
+  gap: 6px;
 }
 
 .item-list-header {
@@ -145,8 +145,8 @@ html, body, #root {
 }
 
 .item-sprite {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
   /* LCD sprite look */
   filter: sepia(20%) saturate(70%) brightness(1.1);
@@ -312,14 +312,14 @@ html, body, #root {
   }
 
   .item-sprite {
-    width: 35px;
-    height: 35px;
+    width: 25px;
+    height: 25px;
   }
 
   .hidden-dog,
   .neutral-sprite {
-    width: 45px;
-    height: 45px;
+    width: 32px;
+    height: 32px;
   }
 }
 
