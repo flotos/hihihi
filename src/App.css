@@ -15,7 +15,7 @@ html, body, #root {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #1a1a2e;
+  background-color: #0d1f0d;
 }
 
 /* Loading screen */
@@ -24,7 +24,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a1a2e;
+  background-color: #0d1f0d;
   color: #ffffff;
   font-size: 1.5rem;
 }
@@ -42,14 +42,14 @@ html, body, #root {
   position: relative;
   overflow: hidden;
   cursor: crosshair;
-  background-color: #2a2a3e;
+  background-color: #1a2e1a;
 }
 
 /* Hidden dogs in scene */
 .hidden-dog {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   transform: translate(-50%, -50%);
   opacity: 1;
   transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
@@ -59,7 +59,7 @@ html, body, #root {
 
 .hidden-dog.found {
   opacity: 1;
-  filter: drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 20px #ffa500);
+  filter: drop-shadow(0 0 10px #4ade80) drop-shadow(0 0 20px #22c55e);
   animation: dogFound 0.5s ease;
 }
 
@@ -78,8 +78,8 @@ html, body, #root {
 /* Neutral/distractor sprites in scene */
 .neutral-sprite {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   transform: translate(-50%, -50%);
   opacity: 1;
   pointer-events: none;
@@ -90,29 +90,29 @@ html, body, #root {
 .item-list {
   width: 300px;
   min-width: 300px;
-  background-color: #16213e;
+  background-color: #0a2a0a;
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  border-left: 2px solid #0f3460;
+  border-left: 2px solid #0d3d0d;
 }
 
 .item-list-header {
   padding: 1rem;
-  background-color: #0f3460;
+  background-color: #0d3d0d;
   text-align: center;
 }
 
 .item-list-header h2 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
-  color: #e94560;
+  color: #4ade80;
 }
 
 .progress-counter {
   font-size: 2rem;
   font-weight: bold;
-  color: #ffd700;
+  color: #86efac;
 }
 
 .item-list-items {
@@ -131,7 +131,7 @@ html, body, #root {
   align-items: center;
   justify-content: center;
   padding: 0.5rem;
-  background-color: #1a1a2e;
+  background-color: #0d1f0d;
   border-radius: 8px;
   transition: background-color 0.2s ease, opacity 0.3s ease;
 }
@@ -185,15 +185,15 @@ html, body, #root {
   text-align: center;
   color: #ffffff;
   padding: 3rem;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(135deg, #0d1f0d 0%, #0a2a0a 100%);
   border-radius: 20px;
-  border: 3px solid #e94560;
-  box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+  border: 3px solid #22c55e;
+  box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
 }
 
 .win-message h1 {
   font-size: 3rem;
-  color: #ffd700;
+  color: #4ade80;
   margin-bottom: 1rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -207,7 +207,7 @@ html, body, #root {
 .win-message button {
   padding: 1rem 2rem;
   font-size: 1.1rem;
-  background-color: #e94560;
+  background-color: #22c55e;
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -216,7 +216,7 @@ html, body, #root {
 }
 
 .win-message button:hover {
-  background-color: #ff6b6b;
+  background-color: #4ade80;
   transform: scale(1.05);
 }
 
@@ -231,7 +231,7 @@ html, body, #root {
     min-width: 100%;
     height: 150px;
     border-left: none;
-    border-top: 2px solid #0f3460;
+    border-top: 2px solid #0d3d0d;
   }
 
   .item-list-items {
@@ -247,7 +247,7 @@ html, body, #root {
 
   .hidden-dog,
   .neutral-sprite {
-    width: 70px;
-    height: 70px;
+    width: 100px;
+    height: 100px;
   }
 }
