@@ -1,9 +1,17 @@
 import { useMemo, useState, useEffect } from 'react';
 import type { DogSprite, HiddenDog, NeutralSprite, PlacedNeutralSprite } from '../types/game';
 
+// 10 emojis that make creatures feel alive
+const BUBBLE_EMOJIS = ['💭', '💤', '✨', '💕', '🎵', '❓', '💡', '🌟', '😊', '🍀'];
+
 interface WanderOffset {
   x: number;
   y: number;
+}
+
+interface BubbleState {
+  emoji: string;
+  visible: boolean;
 }
 
 interface GameSceneProps {
@@ -49,6 +57,9 @@ export function GameScene({
 
   // Wandering offsets for all sprites
   const [wanderOffsets, setWanderOffsets] = useState<Record<string, WanderOffset>>({});
+
+  // Bubble states for all sprites
+  const [bubbles, setBubbles] = useState<Record<string, BubbleState>>({});
 
   // Build a map of original positions for bounds checking
   const originalPositions = useMemo(() => {
@@ -115,6 +126,48 @@ export function GameScene({
     return () => clearInterval(interval);
   }, [hiddenDogs.length, placedNeutrals.length, originalPositions]);
 
+  // Randomly show/hide emoji bubbles
+  useEffect(() => {
+    // Initialize bubble states
+    const initBubbles: Record<string, BubbleState> = {};
+    hiddenDogs.forEach((dog) => {
+      initBubbles[`dog-${dog.id}`] = { emoji: BUBBLE_EMOJIS[0], visible: false };
+    });
+    placedNeutrals.forEach((neutral) => {
+      initBubbles[`neutral-${neutral.id}`] = { emoji: BUBBLE_EMOJIS[0], visible: false };
+    });
+    setBubbles(initBubbles);
+
+    // Randomly show bubbles on some sprites
+    const interval = setInterval(() => {
+      setBubbles((prev) => {
+        const newBubbles = { ...prev };
+        const allKeys = Object.keys(newBubbles);
+
+        // First, hide some currently visible bubbles (30% chance each)
+        allKeys.forEach((key) => {
+          if (newBubbles[key]?.visible && Math.random() < 0.3) {
+            newBubbles[key] = { ...newBubbles[key], visible: false };
+          }
+        });
+
+        // Then, show a new bubble on 1-2 random sprites
+        const numToShow = Math.floor(Math.random() * 2) + 1;
+        for (let i = 0; i < numToShow; i++) {
+          const randomKey = allKeys[Math.floor(Math.random() * allKeys.length)];
+          if (randomKey && newBubbles[randomKey] && !newBubbles[randomKey].visible) {
+            const randomEmoji = BUBBLE_EMOJIS[Math.floor(Math.random() * BUBBLE_EMOJIS.length)];
+            newBubbles[randomKey] = { emoji: randomEmoji, visible: true };
+          }
+        }
+
+        return newBubbles;
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [hiddenDogs.length, placedNeutrals.length]);
+
   const handleSceneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = ((e.clientX - rect.left) / rect.width) * 100;
@@ -146,19 +199,29 @@ export function GameScene({
         if (!sprite) return null;
 
         const offset = wanderOffsets[`neutral-${placed.id}`] || { x: 0, y: 0 };
+        const bubble = bubbles[`neutral-${placed.id}`];
         return (
-          <img
+          <div
             key={`neutral-${placed.id}`}
-            src={sprite.imageUrl}
-            alt="Distractor"
-            className={`neutral-sprite ${jumpActive ? 'jumping' : ''}`}
+            className="sprite-container"
             style={{
               left: `${placed.x + offset.x}%`,
               top: `${placed.y + offset.y}%`,
-              animationDelay: jumpActive ? `${jumpDelays[`neutral-${placed.id}`]}s` : undefined,
               transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
-          />
+          >
+            {bubble?.visible && (
+              <div className="emoji-bubble">{bubble.emoji}</div>
+            )}
+            <img
+              src={sprite.imageUrl}
+              alt="Distractor"
+              className={`neutral-sprite ${jumpActive ? 'jumping' : ''}`}
+              style={{
+                animationDelay: jumpActive ? `${jumpDelays[`neutral-${placed.id}`]}s` : undefined,
+              }}
+            />
+          </div>
         );
       })}
       {/* Render hidden dogs to find */}
@@ -167,19 +230,29 @@ export function GameScene({
         if (!sprite) return null;
 
         const offset = wanderOffsets[`dog-${dog.id}`] || { x: 0, y: 0 };
+        const bubble = bubbles[`dog-${dog.id}`];
         return (
-          <img
+          <div
             key={`dog-${dog.id}`}
-            src={sprite.imageUrl}
-            alt={sprite.name}
-            className={`hidden-dog ${dog.found ? 'found' : ''} ${jumpActive ? 'jumping' : ''}`}
+            className="sprite-container"
             style={{
               left: `${dog.x + offset.x}%`,
               top: `${dog.y + offset.y}%`,
-              animationDelay: jumpActive ? `${jumpDelays[`dog-${dog.id}`]}s` : undefined,
               transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
-          />
+          >
+            {bubble?.visible && (
+              <div className="emoji-bubble">{bubble.emoji}</div>
+            )}
+            <img
+              src={sprite.imageUrl}
+              alt={sprite.name}
+              className={`hidden-dog ${dog.found ? 'found' : ''} ${jumpActive ? 'jumping' : ''}`}
+              style={{
+                animationDelay: jumpActive ? `${jumpDelays[`dog-${dog.id}`]}s` : undefined,
+              }}
+            />
+          </div>
         );
       })}
     </div>

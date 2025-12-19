@@ -1,5 +1,40 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
+
+// Generate a cute tamagotchi-style sound with slight variation
+function playTamagotchiSound() {
+  const audioContext = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+
+  // Random variations
+  const baseFreq = 600 + Math.random() * 200; // Base frequency varies between 600-800 Hz
+  const freqMultiplier = 1.2 + Math.random() * 0.3; // How much the frequency rises
+  const duration = 0.08 + Math.random() * 0.04; // Duration of each note
+  const noteCount = 3 + Math.floor(Math.random() * 2); // 3-4 notes
+
+  for (let i = 0; i < noteCount; i++) {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    // Chip-tune style square wave
+    oscillator.type = 'square';
+
+    // Each note goes up in pitch (classic happy tamagotchi pattern)
+    const noteFreq = baseFreq * Math.pow(freqMultiplier, i) + (Math.random() * 30 - 15);
+    oscillator.frequency.setValueAtTime(noteFreq, audioContext.currentTime + i * duration);
+
+    // Quick attack, quick decay envelope
+    const startTime = audioContext.currentTime + i * duration;
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration * 0.9);
+
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration);
+  }
+}
 import { GameScene } from "./components/GameScene";
 import { ItemList } from "./components/ItemList";
 import { LoveMessage } from "./components/LoveMessage";
@@ -91,6 +126,9 @@ function App() {
   }, []);
 
   const handleDogFound = (dogId: number) => {
+    // Play cute tamagotchi sound
+    playTamagotchiSound();
+
     // Calculate the new dog number (how many dogs found after this one)
     const newFoundCount = hiddenDogs.filter((dog) => dog.found).length + 1;
 
