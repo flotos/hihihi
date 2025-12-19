@@ -144,7 +144,7 @@ function App() {
         </div>
       </Tamagotchi>
 
-      {showLoveMessage && currentDogNumber > 0 && (
+      {showLoveMessage && currentDogNumber > 0 && !isComplete && (
         <LoveMessage
           dogNumber={currentDogNumber}
           onComplete={handleLoveMessageComplete}

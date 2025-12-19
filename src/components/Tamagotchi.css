@@ -6,6 +6,20 @@
   min-height: 100vh;
   padding: 5px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  position: relative;
+}
+
+/* Cursor shadow effect */
+.cursor-shadow {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(8px, 8px);
+  filter: blur(4px);
+  z-index: 9999;
 }
 
 /* Main device container */
@@ -106,6 +120,7 @@
     0 4px 8px rgba(0, 0, 0, 0.3),
     inset 0 -2px 5px rgba(255, 255, 255, 0.1);
   border: 3px solid #333;
+  overflow: hidden;
 }
 
 /* LCD Screen */
@@ -124,35 +139,6 @@
     linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 2px 2px;
-}
-
-/* Screen corner decorations */
-.screen-corner {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: #444;
-  border-radius: 50%;
-}
-
-.screen-corner.top-left {
-  top: 6px;
-  left: 6px;
-}
-
-.screen-corner.top-right {
-  top: 6px;
-  right: 6px;
-}
-
-.screen-corner.bottom-left {
-  bottom: 6px;
-  left: 6px;
-}
-
-.screen-corner.bottom-right {
-  bottom: 6px;
-  right: 6px;
 }
 
 /* Stats display */

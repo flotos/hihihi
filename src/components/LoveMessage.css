@@ -1,29 +1,21 @@
 /* Love Message Overlay */
 .love-message-overlay {
   position: fixed;
-  top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 20px;
   display: flex;
-  align-items: center;
   justify-content: center;
   z-index: 500;
   pointer-events: none;
   animation: overlayFadeIn 0.3s ease;
 }
 
-/* Emphasis levels - background intensity */
-.love-message-overlay.emphasis-1 {
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.2) 0%, transparent 70%);
-}
-
-.love-message-overlay.emphasis-2 {
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.35) 0%, rgba(34, 197, 94, 0.1) 50%, transparent 80%);
-}
-
+/* Emphasis levels - no background needed for bottom positioning */
+.love-message-overlay.emphasis-1,
+.love-message-overlay.emphasis-2,
 .love-message-overlay.emphasis-3 {
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.5) 0%, rgba(34, 197, 94, 0.2) 40%, rgba(22, 163, 74, 0.1) 70%, transparent 90%);
+  background: transparent;
 }
 
 @keyframes overlayFadeIn {
@@ -51,11 +43,11 @@
 
 /* Hearts container */
 .hearts-container {
-  position: absolute;
-  top: 0;
+  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  height: 100vh;
   overflow: hidden;
   pointer-events: none;
 }

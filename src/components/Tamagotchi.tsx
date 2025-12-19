@@ -1,4 +1,4 @@
-import { useState, useCallback, type ReactNode } from 'react';
+import { useState, useCallback, useRef, type ReactNode } from 'react';
 import './Tamagotchi.css';
 
 interface TamagotchiProps {
@@ -17,9 +17,18 @@ interface HeartParticle {
   delay: number;
 }
 
+interface CursorShadow {
+  x: number;
+  y: number;
+  visible: boolean;
+}
+
 export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButtonB, onButtonC }: TamagotchiProps) {
   const [hearts, setHearts] = useState<HeartParticle[]>([]);
   const [neonActive, setNeonActive] = useState(false);
+  const [cursorShadow, setCursorShadow] = useState<CursorShadow>({ x: 0, y: 0, visible: false });
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const bezelRef = useRef<HTMLDivElement>(null);
 
   const handleButtonA = useCallback(() => {
     // Create heart particles
@@ -48,6 +57,29 @@ export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButt
     setTimeout(() => setNeonActive(false), 1500);
     onButtonC?.();
   }, [onButtonC]);
+
+  const handleBodyMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Check if we're over the bezel/screen - if so, hide the shadow
+    if (bezelRef.current) {
+      const bezelRect = bezelRef.current.getBoundingClientRect();
+      if (
+        e.clientX >= bezelRect.left &&
+        e.clientX <= bezelRect.right &&
+        e.clientY >= bezelRect.top &&
+        e.clientY <= bezelRect.bottom
+      ) {
+        setCursorShadow(prev => ({ ...prev, visible: false }));
+        return;
+      }
+    }
+
+    setCursorShadow({ x: e.clientX, y: e.clientY, visible: true });
+  }, []);
+
+  const handleBodyMouseLeave = useCallback(() => {
+    setCursorShadow(prev => ({ ...prev, visible: false }));
+  }, []);
+
   return (
     <div className="tamagotchi-wrapper">
       <div className="tamagotchi-device">
@@ -58,7 +90,12 @@ export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButt
         </div>
 
         {/* Main egg-shaped body */}
-        <div className="tamagotchi-body">
+        <div
+          ref={bodyRef}
+          className="tamagotchi-body"
+          onMouseMove={handleBodyMouseMove}
+          onMouseLeave={handleBodyMouseLeave}
+        >
           {/* Brand label */}
           <div className="tamagotchi-brand">
             <span className="brand-text">PUPPY FINDER</span>
@@ -66,7 +103,7 @@ export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButt
           </div>
 
           {/* Screen bezel */}
-          <div className={`tamagotchi-bezel ${neonActive ? 'neon-active' : ''}`}>
+          <div ref={bezelRef} className={`tamagotchi-bezel ${neonActive ? 'neon-active' : ''}`}>
             {/* LCD Screen */}
             <div className="tamagotchi-screen">
               {children}
@@ -87,11 +124,6 @@ export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButt
               </div>
             ))}
 
-            {/* Screen decorations */}
-            <div className="screen-corner top-left"></div>
-            <div className="screen-corner top-right"></div>
-            <div className="screen-corner bottom-left"></div>
-            <div className="screen-corner bottom-right"></div>
           </div>
 
           {/* Stats display under screen */}
@@ -142,6 +174,17 @@ export function Tamagotchi({ children, foundCount, totalCount, onButtonA, onButt
           <div className="decor-dot"></div>
         </div>
       </div>
+
+      {/* Cursor shadow */}
+      {cursorShadow.visible && (
+        <div
+          className="cursor-shadow"
+          style={{
+            left: cursorShadow.x,
+            top: cursorShadow.y,
+          }}
+        />
+      )}
     </div>
   );
 }
