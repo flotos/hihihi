@@ -111,8 +111,8 @@ html, body, #root {
 
 /* Hidden dogs in scene */
 .hidden-dog {
-  width: 69px;
-  height: 69px;
+  width: 79px;
+  height: 79px;
   opacity: 1;
   transition: opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease;
   pointer-events: none;
@@ -141,8 +141,8 @@ html, body, #root {
 
 /* Neutral/distractor sprites in scene */
 .neutral-sprite {
-  width: 69px;
-  height: 69px;
+  width: 79px;
+  height: 79px;
   opacity: 1;
   pointer-events: none;
   object-fit: contain;
@@ -480,8 +480,8 @@ html, body, #root {
 
   .hidden-dog,
   .neutral-sprite {
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
   }
 
   .emoji-bubble {

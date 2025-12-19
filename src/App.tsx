@@ -104,17 +104,43 @@ function App() {
           })
         );
 
-        // Helper to generate random position within bounds
-        const randomPosition = () => ({
-          x: 5 + Math.random() * 90, // 5-95%
-          y: 5 + Math.random() * 90, // 5-95%
-        });
+        // Minimum distance between sprites (in %)
+        const MIN_DISTANCE = 12;
+        const placedPositions: { x: number; y: number }[] = [];
 
-        // Create HiddenDog objects with randomized positions
+        // Helper to generate random position that's separated from existing ones
+        const getSeparatedPosition = () => {
+          const maxAttempts = 50;
+          for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            const x = 8 + Math.random() * 84; // 8-92% for more margin
+            const y = 8 + Math.random() * 84;
+
+            // Check distance from all placed positions
+            let tooClose = false;
+            for (const pos of placedPositions) {
+              const dist = Math.sqrt(Math.pow(x - pos.x, 2) + Math.pow(y - pos.y, 2));
+              if (dist < MIN_DISTANCE) {
+                tooClose = true;
+                break;
+              }
+            }
+
+            if (!tooClose) {
+              placedPositions.push({ x, y });
+              return { x, y };
+            }
+          }
+          // Fallback if no good position found
+          const fallback = { x: 8 + Math.random() * 84, y: 8 + Math.random() * 84 };
+          placedPositions.push(fallback);
+          return fallback;
+        };
+
+        // Create HiddenDog objects with separated positions
         const hidden: HiddenDog[] = dogPositions
           .filter((pos) => pos.spriteIndex < dogSprites.length)
           .map((pos, index) => {
-            const randPos = randomPosition();
+            const randPos = getSeparatedPosition();
             return {
               id: index,
               spriteId: pos.spriteIndex,
@@ -132,18 +158,25 @@ function App() {
           })
         );
 
-        // Create PlacedNeutralSprite objects with randomized positions
-        const placedNeutralList: PlacedNeutralSprite[] = neutralPositions
-          .filter((pos) => pos.spriteIndex < neutralSpriteList.length)
-          .map((pos, index) => {
-            const randPos = randomPosition();
+        // Create PlacedNeutralSprite objects with separated positions
+        // Randomly exclude 5 neutral sprites each game
+        const validNeutralPositions = neutralPositions.filter(
+          (pos) => pos.spriteIndex < neutralSpriteList.length
+        );
+        const shuffled = [...validNeutralPositions].sort(() => Math.random() - 0.5);
+        const selectedNeutrals = shuffled.slice(5); // Remove 5 random sprites
+
+        const placedNeutralList: PlacedNeutralSprite[] = selectedNeutrals.map(
+          (pos, index) => {
+            const randPos = getSeparatedPosition();
             return {
               id: index,
               spriteId: pos.spriteIndex,
               x: randPos.x,
               y: randPos.y,
             };
-          });
+          }
+        );
 
         setSprites(dogSprites);
         setHiddenDogs(hidden);
