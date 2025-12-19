@@ -1,18 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
-import './App.css';
-import { GameScene } from './components/GameScene';
-import { ItemList } from './components/ItemList';
-import { LoveMessage } from './components/LoveMessage';
-import { Tamagotchi } from './components/Tamagotchi';
-import { loadSpritesToFind, loadNeutralSprites } from './utils/spritesheet';
-import { dogPositions, neutralPositions } from './data/dogPositions';
-import type { DogSprite, HiddenDog, NeutralSprite, PlacedNeutralSprite } from './types/game';
+import { useState, useEffect, useCallback } from "react";
+import "./App.css";
+import { GameScene } from "./components/GameScene";
+import { ItemList } from "./components/ItemList";
+import { LoveMessage } from "./components/LoveMessage";
+import { Tamagotchi } from "./components/Tamagotchi";
+import { loadSpritesToFind, loadNeutralSprites } from "./utils/spritesheet";
+import { dogPositions, neutralPositions } from "./data/dogPositions";
+import type {
+  DogSprite,
+  HiddenDog,
+  NeutralSprite,
+  PlacedNeutralSprite,
+} from "./types/game";
 
 function App() {
   const [sprites, setSprites] = useState<DogSprite[]>([]);
   const [hiddenDogs, setHiddenDogs] = useState<HiddenDog[]>([]);
   const [neutralSprites, setNeutralSprites] = useState<NeutralSprite[]>([]);
-  const [placedNeutrals, setPlacedNeutrals] = useState<PlacedNeutralSprite[]>([]);
+  const [placedNeutrals, setPlacedNeutrals] = useState<PlacedNeutralSprite[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [showLoveMessage, setShowLoveMessage] = useState(false);
   const [currentDogNumber, setCurrentDogNumber] = useState(0);
@@ -32,11 +39,13 @@ function App() {
         ]);
 
         // Create DogSprite objects from processed sprites
-        const dogSprites: DogSprite[] = toFindProcessed.sprites.map((imageUrl, index) => ({
-          id: index,
-          imageUrl,
-          name: `Dog ${index + 1}`,
-        }));
+        const dogSprites: DogSprite[] = toFindProcessed.sprites.map(
+          (imageUrl, index) => ({
+            id: index,
+            imageUrl,
+            name: `Dog ${index + 1}`,
+          })
+        );
 
         // Create HiddenDog objects from positions
         const hidden: HiddenDog[] = dogPositions
@@ -50,10 +59,12 @@ function App() {
           }));
 
         // Create NeutralSprite objects
-        const neutralSpriteList: NeutralSprite[] = neutralProcessed.sprites.map((imageUrl, index) => ({
-          id: index,
-          imageUrl,
-        }));
+        const neutralSpriteList: NeutralSprite[] = neutralProcessed.sprites.map(
+          (imageUrl, index) => ({
+            id: index,
+            imageUrl,
+          })
+        );
 
         // Create PlacedNeutralSprite objects from positions
         const placedNeutralList: PlacedNeutralSprite[] = neutralPositions
@@ -70,7 +81,7 @@ function App() {
         setNeutralSprites(neutralSpriteList);
         setPlacedNeutrals(placedNeutralList);
       } catch (error) {
-        console.error('Failed to load spritesheets:', error);
+        console.error("Failed to load spritesheets:", error);
       } finally {
         setLoading(false);
       }
@@ -84,9 +95,7 @@ function App() {
     const newFoundCount = hiddenDogs.filter((dog) => dog.found).length + 1;
 
     setHiddenDogs((prev) =>
-      prev.map((dog) =>
-        dog.id === dogId ? { ...dog, found: true } : dog
-      )
+      prev.map((dog) => (dog.id === dogId ? { ...dog, found: true } : dog))
     );
 
     // Trigger love message
@@ -113,7 +122,11 @@ function App() {
 
   return (
     <div className="app">
-      <Tamagotchi foundCount={foundCount} totalCount={totalCount} onButtonB={handleButtonB}>
+      <Tamagotchi
+        foundCount={foundCount}
+        totalCount={totalCount}
+        onButtonB={handleButtonB}
+      >
         <div className="tamagotchi-game-layout">
           <GameScene
             sprites={sprites}
@@ -123,7 +136,11 @@ function App() {
             onDogFound={handleDogFound}
             jumpActive={jumpActive}
           />
-          <ItemList sprites={sprites} hiddenDogs={hiddenDogs} jumpActive={jumpActive} />
+          <ItemList
+            sprites={sprites}
+            hiddenDogs={hiddenDogs}
+            jumpActive={jumpActive}
+          />
         </div>
       </Tamagotchi>
 
@@ -145,7 +162,18 @@ function App() {
                   left: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 5}s`,
                   animationDuration: `${3 + Math.random() * 4}s`,
-                  backgroundColor: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff6600', '#9900ff', '#ff69b4', '#32cd32'][Math.floor(Math.random() * 10)],
+                  backgroundColor: [
+                    "#ff0000",
+                    "#00ff00",
+                    "#0000ff",
+                    "#ffff00",
+                    "#ff00ff",
+                    "#00ffff",
+                    "#ff6600",
+                    "#9900ff",
+                    "#ff69b4",
+                    "#32cd32",
+                  ][Math.floor(Math.random() * 10)],
                 }}
               />
             ))}
@@ -153,8 +181,10 @@ function App() {
           <div className="win-message">
             <div className="message-hearts-top">💕💕💕💕💕</div>
             <div className="giant-key-emoji">🔑</div>
-            <h1 className="love-text final-message">Tu as gagnée la clé bleue !</h1>
-            <p className="win-subtext">Non mais t'a été vraiment trop forte, bravo t'a tout gagnée</p>
+            <h1 className="love-text final-message">Tu as gagnée !</h1>
+            <p className="win-subtext">
+              Non mais t'a été vraiment trop forte, bravo t'a tout gagnée
+            </p>
             <div className="message-hearts-bottom">💖💖💖💖💖</div>
           </div>
         </div>
