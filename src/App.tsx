@@ -290,7 +290,7 @@ function App() {
           </div>
           <div className="win-message">
             <div className="message-hearts-top">💕💕💕💕💕</div>
-            <div className="giant-key-emoji">🔑</div>
+            <div className="giant-key-emoji">🎂</div>
             <h1 className="love-text final-message">Tu as gagnée !</h1>
             <p className="win-subtext">
               Non mais t'a été vraiment trop forte, bravo t'a tout gagnée

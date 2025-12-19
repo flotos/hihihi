@@ -106,7 +106,7 @@ export function LoveMessage({ dogNumber, onComplete }: LoveMessageProps) {
         </div>
         {messageIndex === LOVE_MESSAGES.length - 1 ? (
           <>
-            <div className="giant-key-emoji">🔑</div>
+            <div className="giant-key-emoji">🎂</div>
             <h1 className="love-text">{message}</h1>
           </>
         ) : (
