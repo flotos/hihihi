@@ -50,6 +50,18 @@ export function GameScene({
   // Wandering offsets for all sprites
   const [wanderOffsets, setWanderOffsets] = useState<Record<string, WanderOffset>>({});
 
+  // Build a map of original positions for bounds checking
+  const originalPositions = useMemo(() => {
+    const positions: Record<string, { x: number; y: number }> = {};
+    hiddenDogs.forEach((dog) => {
+      positions[`dog-${dog.id}`] = { x: dog.x, y: dog.y };
+    });
+    placedNeutrals.forEach((neutral) => {
+      positions[`neutral-${neutral.id}`] = { x: neutral.x, y: neutral.y };
+    });
+    return positions;
+  }, [hiddenDogs, placedNeutrals]);
+
   // Initialize and update wander offsets periodically
   useEffect(() => {
     // Initialize offsets for all sprites
@@ -72,8 +84,8 @@ export function GameScene({
 
         for (let i = 0; i < numToMove; i++) {
           const randomKey = allKeys[Math.floor(Math.random() * allKeys.length)];
-          if (randomKey && newOffsets[randomKey]) {
-            // Add small random movement (-2 to 2 pixels equivalent in %)
+          const originalPos = originalPositions[randomKey];
+          if (randomKey && newOffsets[randomKey] && originalPos) {
             const maxWander = 1.5; // Max % offset from original position
             const step = 0.4; // Step size in %
 
@@ -84,6 +96,15 @@ export function GameScene({
             newX = Math.max(-maxWander, Math.min(maxWander, newX));
             newY = Math.max(-maxWander, Math.min(maxWander, newY));
 
+            // Ensure final position stays within screen bounds (2-98% to keep sprites visible)
+            const finalX = originalPos.x + newX;
+            const finalY = originalPos.y + newY;
+
+            if (finalX < 2) newX = 2 - originalPos.x;
+            if (finalX > 98) newX = 98 - originalPos.x;
+            if (finalY < 2) newY = 2 - originalPos.y;
+            if (finalY > 98) newY = 98 - originalPos.y;
+
             newOffsets[randomKey] = { x: newX, y: newY };
           }
         }
@@ -92,7 +113,7 @@ export function GameScene({
     }, 800);
 
     return () => clearInterval(interval);
-  }, [hiddenDogs.length, placedNeutrals.length]);
+  }, [hiddenDogs.length, placedNeutrals.length, originalPositions]);
 
   const handleSceneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
