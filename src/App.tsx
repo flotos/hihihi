@@ -1,6 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 
+// Short low beep for clicking on wrong sprite
+function playMissSound() {
+  const audioContext = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+
+  const oscillator = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
+
+  oscillator.connect(gainNode);
+  gainNode.connect(audioContext.destination);
+
+  oscillator.type = 'square';
+  // Very low frequency with slight variation (80-110 Hz)
+  oscillator.frequency.setValueAtTime(80 + Math.random() * 30, audioContext.currentTime);
+
+  // Very short beep
+  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.005, audioContext.currentTime + 0.08);
+
+  oscillator.start(audioContext.currentTime);
+  oscillator.stop(audioContext.currentTime + 0.08);
+}
+
 // Generate a cute tamagotchi-style sound with slight variation
 function playTamagotchiSound() {
   const audioContext = new (window.AudioContext || (window as typeof window & { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
@@ -150,6 +172,10 @@ function App() {
     setTimeout(() => setJumpActive(false), 800);
   }, []);
 
+  const handleMiss = useCallback(() => {
+    playMissSound();
+  }, []);
+
   if (loading) {
     return (
       <div className="loading">
@@ -172,6 +198,7 @@ function App() {
             neutralSprites={neutralSprites}
             placedNeutrals={placedNeutrals}
             onDogFound={handleDogFound}
+            onMiss={handleMiss}
             jumpActive={jumpActive}
           />
           <ItemList

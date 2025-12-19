@@ -20,6 +20,7 @@ interface GameSceneProps {
   neutralSprites: NeutralSprite[];
   placedNeutrals: PlacedNeutralSprite[];
   onDogFound: (dogId: number) => void;
+  onMiss?: () => void;
   jumpActive?: boolean;
 }
 
@@ -29,6 +30,7 @@ export function GameScene({
   neutralSprites,
   placedNeutrals,
   onDogFound,
+  onMiss,
   jumpActive = false,
 }: GameSceneProps) {
   // Create a map of spriteId to sprite for quick lookup
@@ -60,6 +62,12 @@ export function GameScene({
 
   // Bubble states for all sprites
   const [bubbles, setBubbles] = useState<Record<string, BubbleState>>({});
+
+  // Track sprites that were just repelled (for faster animation)
+  const [repelledSprites, setRepelledSprites] = useState<Set<string>>(new Set());
+
+  // Track sprite that was clicked (for shake animation)
+  const [shakenSprite, setShakenSprite] = useState<string | null>(null);
 
   // Build a map of original positions for bounds checking
   const originalPositions = useMemo(() => {
@@ -176,19 +184,113 @@ export function GameScene({
     // Detection radius as percentage of scene dimensions
     const detectionRadius = 7;
 
-    // Check if click is near any unfound dog (neutral sprites are ignored)
+    // Check if click is near any unfound dog
     for (const dog of hiddenDogs) {
       if (dog.found) continue;
 
+      const offset = wanderOffsets[`dog-${dog.id}`] || { x: 0, y: 0 };
       const distance = Math.sqrt(
-        Math.pow(clickX - dog.x, 2) + Math.pow(clickY - dog.y, 2)
+        Math.pow(clickX - (dog.x + offset.x), 2) + Math.pow(clickY - (dog.y + offset.y), 2)
       );
 
       if (distance <= detectionRadius) {
         onDogFound(dog.id);
+        return;
+      }
+    }
+
+    // Check if click is near any neutral sprite (miss sound)
+    let clickedNeutralKey: string | null = null;
+    for (const neutral of placedNeutrals) {
+      const offset = wanderOffsets[`neutral-${neutral.id}`] || { x: 0, y: 0 };
+      const distance = Math.sqrt(
+        Math.pow(clickX - (neutral.x + offset.x), 2) + Math.pow(clickY - (neutral.y + offset.y), 2)
+      );
+
+      if (distance <= detectionRadius) {
+        onMiss?.();
+        clickedNeutralKey = `neutral-${neutral.id}`;
+        setShakenSprite(clickedNeutralKey);
+        setTimeout(() => setShakenSprite(null), 400);
         break;
       }
     }
+
+    // Push nearby sprites away from click
+    const repelRadius = 22.5; // Radius in % to affect sprites
+    const repelStrength = 2; // How far to push in %
+
+    setWanderOffsets((prev) => {
+      const newOffsets = { ...prev };
+
+      // Check all sprites and push them away if close to click
+      const checkAndRepel = (key: string, spriteX: number, spriteY: number) => {
+        const offset = prev[key] || { x: 0, y: 0 };
+        const currentX = spriteX + offset.x;
+        const currentY = spriteY + offset.y;
+        const distance = Math.sqrt(
+          Math.pow(clickX - currentX, 2) + Math.pow(clickY - currentY, 2)
+        );
+
+        if (distance < repelRadius && distance > 0) {
+          // Calculate direction away from click
+          const dirX = (currentX - clickX) / distance;
+          const dirY = (currentY - clickY) / distance;
+
+          // Strength decreases with distance
+          const strength = repelStrength * (1 - distance / repelRadius);
+
+          let newX = offset.x + dirX * strength;
+          let newY = offset.y + dirY * strength;
+
+          // Clamp to max wander range
+          const maxWander = 3;
+          newX = Math.max(-maxWander, Math.min(maxWander, newX));
+          newY = Math.max(-maxWander, Math.min(maxWander, newY));
+
+          // Ensure final position stays within screen bounds
+          const originalPos = originalPositions[key];
+          if (originalPos) {
+            const finalX = originalPos.x + newX;
+            const finalY = originalPos.y + newY;
+            if (finalX < 2) newX = 2 - originalPos.x;
+            if (finalX > 98) newX = 98 - originalPos.x;
+            if (finalY < 2) newY = 2 - originalPos.y;
+            if (finalY > 98) newY = 98 - originalPos.y;
+          }
+
+          newOffsets[key] = { x: newX, y: newY };
+        }
+      };
+
+      const repelled: string[] = [];
+
+      // Repel dogs
+      hiddenDogs.forEach((dog) => {
+        if (!dog.found) {
+          const key = `dog-${dog.id}`;
+          const before = prev[key];
+          checkAndRepel(key, dog.x, dog.y);
+          if (newOffsets[key] !== before) repelled.push(key);
+        }
+      });
+
+      // Repel neutrals
+      placedNeutrals.forEach((neutral) => {
+        const key = `neutral-${neutral.id}`;
+        const before = prev[key];
+        checkAndRepel(key, neutral.x, neutral.y);
+        if (newOffsets[key] !== before) repelled.push(key);
+      });
+
+      // Mark repelled sprites for fast animation
+      if (repelled.length > 0) {
+        setRepelledSprites(new Set(repelled));
+        setTimeout(() => setRepelledSprites(new Set()), 250);
+      }
+
+      return newOffsets;
+    });
   };
 
   return (
@@ -198,16 +300,20 @@ export function GameScene({
         const sprite = neutralSpriteMap.get(placed.spriteId);
         if (!sprite) return null;
 
-        const offset = wanderOffsets[`neutral-${placed.id}`] || { x: 0, y: 0 };
-        const bubble = bubbles[`neutral-${placed.id}`];
+        const key = `neutral-${placed.id}`;
+        const offset = wanderOffsets[key] || { x: 0, y: 0 };
+        const bubble = bubbles[key];
+        const isRepelled = repelledSprites.has(key);
         return (
           <div
-            key={`neutral-${placed.id}`}
+            key={key}
             className="sprite-container"
             style={{
               left: `${placed.x + offset.x}%`,
               top: `${placed.y + offset.y}%`,
-              transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
+              transition: isRepelled
+                ? 'left 0.15s ease-out, top 0.15s ease-out'
+                : 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
           >
             {bubble?.visible && (
@@ -216,9 +322,9 @@ export function GameScene({
             <img
               src={sprite.imageUrl}
               alt="Distractor"
-              className={`neutral-sprite ${jumpActive ? 'jumping' : ''}`}
+              className={`neutral-sprite ${jumpActive ? 'jumping' : ''} ${shakenSprite === key ? 'shaking' : ''}`}
               style={{
-                animationDelay: jumpActive ? `${jumpDelays[`neutral-${placed.id}`]}s` : undefined,
+                animationDelay: jumpActive ? `${jumpDelays[key]}s` : undefined,
               }}
             />
           </div>
@@ -229,16 +335,20 @@ export function GameScene({
         const sprite = spriteMap.get(dog.spriteId);
         if (!sprite) return null;
 
-        const offset = wanderOffsets[`dog-${dog.id}`] || { x: 0, y: 0 };
-        const bubble = bubbles[`dog-${dog.id}`];
+        const key = `dog-${dog.id}`;
+        const offset = wanderOffsets[key] || { x: 0, y: 0 };
+        const bubble = bubbles[key];
+        const isRepelled = repelledSprites.has(key);
         return (
           <div
-            key={`dog-${dog.id}`}
+            key={key}
             className="sprite-container"
             style={{
               left: `${dog.x + offset.x}%`,
               top: `${dog.y + offset.y}%`,
-              transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
+              transition: isRepelled
+                ? 'left 0.15s ease-out, top 0.15s ease-out'
+                : 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
           >
             {bubble?.visible && (

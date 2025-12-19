@@ -427,6 +427,35 @@ html, body, #root {
   }
 }
 
+/* Shake animation for miss clicks */
+.neutral-sprite.shaking {
+  animation: sprite-shake 0.4s ease-out;
+}
+
+@keyframes sprite-shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-4px) rotate(-2deg);
+  }
+  30% {
+    transform: translateX(4px) rotate(2deg);
+  }
+  45% {
+    transform: translateX(-3px) rotate(-1deg);
+  }
+  60% {
+    transform: translateX(3px) rotate(1deg);
+  }
+  75% {
+    transform: translateX(-2px);
+  }
+  90% {
+    transform: translateX(2px);
+  }
+}
+
 /* Responsive adjustments for tamagotchi */
 @media (max-width: 600px) {
   .game-scene {
@@ -446,6 +475,20 @@ html, body, #root {
   .neutral-sprite {
     width: 32px;
     height: 32px;
+  }
+
+  .emoji-bubble {
+    top: -22px;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 8px;
+  }
+
+  .emoji-bubble::after {
+    bottom: -4px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid rgba(255, 255, 255, 0.9);
   }
 }
 
