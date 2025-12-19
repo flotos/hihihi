@@ -35,6 +35,20 @@
   }
 }
 
+/* Fade out animation */
+.love-message-overlay.fading-out {
+  animation: overlayFadeOut 0.1s ease forwards;
+}
+
+@keyframes overlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Hearts container */
 .hearts-container {
   position: absolute;

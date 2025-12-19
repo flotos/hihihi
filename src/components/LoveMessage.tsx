@@ -8,7 +8,7 @@ interface LoveMessageProps {
 
 // Escalating love messages - getting more romantic with each dog found!
 const LOVE_MESSAGES = [
-  "Je t'aime",
+  "Bien vu !",
   "Chérie chérie chérie",
   "Mon amour ? Mon Coeur !",
   "Olalala qu'elle est forteeeee !",
@@ -16,7 +16,7 @@ const LOVE_MESSAGES = [
   "Ohhh darling my dear dear love ohh yeaaaah !",
   "CHOUPINETTE !",
   "gnoooo <3",
-  "Tu as gagnée la clé bleue !",
+  "Tu as gagnée !",
 ];
 
 // Heart types for variety
@@ -34,6 +34,7 @@ interface FloatingHeart {
 export function LoveMessage({ dogNumber, onComplete }: LoveMessageProps) {
   const [hearts, setHearts] = useState<FloatingHeart[]>([]);
   const [visible, setVisible] = useState(true);
+  const [fading, setFading] = useState(false);
 
   // Get message based on dog number (cycle if more dogs than messages)
   const messageIndex = Math.min(dogNumber - 1, LOVE_MESSAGES.length - 1);
@@ -60,10 +61,13 @@ export function LoveMessage({ dogNumber, onComplete }: LoveMessageProps) {
     }
     setHearts(generatedHearts);
 
-    // Auto-hide after animation
+    // Auto-hide after animation - start fade out, then hide completely
     const timer = setTimeout(() => {
-      setVisible(false);
-      setTimeout(onComplete, 500);
+      setFading(true);
+      setTimeout(() => {
+        setVisible(false);
+        onComplete();
+      }, 100); // 0.1 second fade out
     }, 1500 + emphasisLevel * 500);
 
     return () => clearTimeout(timer);
@@ -72,7 +76,11 @@ export function LoveMessage({ dogNumber, onComplete }: LoveMessageProps) {
   if (!visible) return null;
 
   return (
-    <div className={`love-message-overlay emphasis-${emphasisLevel}`}>
+    <div
+      className={`love-message-overlay emphasis-${emphasisLevel}${
+        fading ? " fading-out" : ""
+      }`}
+    >
       {/* Floating hearts background */}
       <div className="hearts-container">
         {hearts.map((heart) => (
