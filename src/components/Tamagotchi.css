@@ -464,20 +464,41 @@
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
+  .cursor-shadow {
+    display: none;
+  }
+
+  .tamagotchi-wrapper {
+    padding: 2px;
+  }
+
   .tamagotchi-body {
-    width: 340px;
-    height: 500px;
-    padding: 20px 15px 15px 15px;
+    width: calc(100vw - 4px);
+    height: auto;
+    min-height: 100vh;
+    padding: 10px 6px 10px 6px;
+    border-radius: 0;
+    border-width: 0;
   }
 
   .tamagotchi-bezel {
-    width: 280px;
-    height: 280px;
-    padding: 10px;
+    width: calc(100vw - 20px);
+    height: calc(100vw - 20px);
+    max-height: 70vh;
+    padding: 6px;
+    border-radius: 12px;
+  }
+
+  .tamagotchi-antenna {
+    display: none;
+  }
+
+  .tamagotchi-brand {
+    margin-bottom: 4px;
   }
 
   .brand-text {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .tama-button {
@@ -488,7 +509,11 @@
 
   .tamagotchi-buttons {
     gap: 15px;
-    margin-top: 15px;
+    margin-top: 10px;
+  }
+
+  .tamagotchi-stats {
+    margin-top: 6px;
   }
 
   .stat-hearts {
@@ -497,5 +522,9 @@
 
   .stat-heart {
     font-size: 0.8rem;
+  }
+
+  .tamagotchi-speaker {
+    margin-top: 8px;
   }
 }

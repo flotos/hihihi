@@ -458,12 +458,19 @@ html, body, #root {
 
 /* Responsive adjustments for tamagotchi */
 @media (max-width: 600px) {
+  .tamagotchi-game-layout {
+    height: 100%;
+  }
+
   .game-scene {
-    height: 200px;
+    flex: 1;
+    height: auto;
+    min-height: 0;
   }
 
   .item-list {
     height: 60px;
+    flex-shrink: 0;
   }
 
   .item-sprite {
@@ -473,8 +480,8 @@ html, body, #root {
 
   .hidden-dog,
   .neutral-sprite {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
   }
 
   .emoji-bubble {
