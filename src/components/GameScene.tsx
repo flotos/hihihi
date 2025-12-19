@@ -1,5 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { DogSprite, HiddenDog, NeutralSprite, PlacedNeutralSprite } from '../types/game';
+
+interface WanderOffset {
+  x: number;
+  y: number;
+}
 
 interface GameSceneProps {
   sprites: DogSprite[];
@@ -42,6 +47,53 @@ export function GameScene({
     return delays;
   }, [hiddenDogs.length, placedNeutrals.length]);
 
+  // Wandering offsets for all sprites
+  const [wanderOffsets, setWanderOffsets] = useState<Record<string, WanderOffset>>({});
+
+  // Initialize and update wander offsets periodically
+  useEffect(() => {
+    // Initialize offsets for all sprites
+    const initOffsets: Record<string, WanderOffset> = {};
+    hiddenDogs.forEach((dog) => {
+      initOffsets[`dog-${dog.id}`] = { x: 0, y: 0 };
+    });
+    placedNeutrals.forEach((neutral) => {
+      initOffsets[`neutral-${neutral.id}`] = { x: 0, y: 0 };
+    });
+    setWanderOffsets(initOffsets);
+
+    // Update random sprite offsets every 800ms
+    const interval = setInterval(() => {
+      setWanderOffsets((prev) => {
+        const newOffsets = { ...prev };
+        // Pick a few random sprites to move each tick (not all at once)
+        const allKeys = Object.keys(newOffsets);
+        const numToMove = Math.ceil(allKeys.length * 0.3); // Move ~30% of sprites each tick
+
+        for (let i = 0; i < numToMove; i++) {
+          const randomKey = allKeys[Math.floor(Math.random() * allKeys.length)];
+          if (randomKey && newOffsets[randomKey]) {
+            // Add small random movement (-2 to 2 pixels equivalent in %)
+            const maxWander = 1.5; // Max % offset from original position
+            const step = 0.4; // Step size in %
+
+            let newX = newOffsets[randomKey].x + (Math.random() - 0.5) * step * 2;
+            let newY = newOffsets[randomKey].y + (Math.random() - 0.5) * step * 2;
+
+            // Clamp to max wander range
+            newX = Math.max(-maxWander, Math.min(maxWander, newX));
+            newY = Math.max(-maxWander, Math.min(maxWander, newY));
+
+            newOffsets[randomKey] = { x: newX, y: newY };
+          }
+        }
+        return newOffsets;
+      });
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, [hiddenDogs.length, placedNeutrals.length]);
+
   const handleSceneClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clickX = ((e.clientX - rect.left) / rect.width) * 100;
@@ -72,6 +124,7 @@ export function GameScene({
         const sprite = neutralSpriteMap.get(placed.spriteId);
         if (!sprite) return null;
 
+        const offset = wanderOffsets[`neutral-${placed.id}`] || { x: 0, y: 0 };
         return (
           <img
             key={`neutral-${placed.id}`}
@@ -79,9 +132,10 @@ export function GameScene({
             alt="Distractor"
             className={`neutral-sprite ${jumpActive ? 'jumping' : ''}`}
             style={{
-              left: `${placed.x}%`,
-              top: `${placed.y}%`,
+              left: `${placed.x + offset.x}%`,
+              top: `${placed.y + offset.y}%`,
               animationDelay: jumpActive ? `${jumpDelays[`neutral-${placed.id}`]}s` : undefined,
+              transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
           />
         );
@@ -91,6 +145,7 @@ export function GameScene({
         const sprite = spriteMap.get(dog.spriteId);
         if (!sprite) return null;
 
+        const offset = wanderOffsets[`dog-${dog.id}`] || { x: 0, y: 0 };
         return (
           <img
             key={`dog-${dog.id}`}
@@ -98,9 +153,10 @@ export function GameScene({
             alt={sprite.name}
             className={`hidden-dog ${dog.found ? 'found' : ''} ${jumpActive ? 'jumping' : ''}`}
             style={{
-              left: `${dog.x}%`,
-              top: `${dog.y}%`,
+              left: `${dog.x + offset.x}%`,
+              top: `${dog.y + offset.y}%`,
               animationDelay: jumpActive ? `${jumpDelays[`dog-${dog.id}`]}s` : undefined,
+              transition: 'left 0.8s ease-in-out, top 0.8s ease-in-out',
             }}
           />
         );
