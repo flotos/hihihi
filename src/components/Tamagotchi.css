@@ -469,28 +469,27 @@
   }
 
   .tamagotchi-wrapper {
-    padding: 2px;
+    padding: 4px;
   }
 
   .tamagotchi-body {
-    width: calc(100vw - 4px);
+    width: calc(100vw - 8px);
     height: auto;
-    min-height: 100vh;
-    padding: 10px 6px 10px 6px;
-    border-radius: 0;
-    border-width: 0;
+    padding: 12px 10px 20px 10px;
+    border-radius: 30%;
+    border-width: 3px;
   }
 
   .tamagotchi-bezel {
-    width: calc(100vw - 20px);
-    height: calc(100vw - 20px);
-    max-height: 70vh;
+    width: calc(90vw - 20px);
+    height: calc(90vw - 20px);
+    max-height: 62vh;
     padding: 6px;
     border-radius: 12px;
   }
 
   .tamagotchi-antenna {
-    display: none;
+    margin-bottom: -8px;
   }
 
   .tamagotchi-brand {
@@ -507,9 +506,14 @@
     font-size: 0.8rem;
   }
 
+  .tama-button.button-b {
+    margin-top: 15px;
+  }
+
   .tamagotchi-buttons {
     gap: 15px;
     margin-top: 10px;
+    align-items: flex-start;
   }
 
   .tamagotchi-stats {

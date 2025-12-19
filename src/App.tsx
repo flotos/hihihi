@@ -104,16 +104,25 @@ function App() {
           })
         );
 
-        // Create HiddenDog objects from positions
+        // Helper to generate random position within bounds
+        const randomPosition = () => ({
+          x: 5 + Math.random() * 90, // 5-95%
+          y: 5 + Math.random() * 90, // 5-95%
+        });
+
+        // Create HiddenDog objects with randomized positions
         const hidden: HiddenDog[] = dogPositions
           .filter((pos) => pos.spriteIndex < dogSprites.length)
-          .map((pos, index) => ({
-            id: index,
-            spriteId: pos.spriteIndex,
-            x: pos.x,
-            y: pos.y,
-            found: false,
-          }));
+          .map((pos, index) => {
+            const randPos = randomPosition();
+            return {
+              id: index,
+              spriteId: pos.spriteIndex,
+              x: randPos.x,
+              y: randPos.y,
+              found: false,
+            };
+          });
 
         // Create NeutralSprite objects
         const neutralSpriteList: NeutralSprite[] = neutralProcessed.sprites.map(
@@ -123,15 +132,18 @@ function App() {
           })
         );
 
-        // Create PlacedNeutralSprite objects from positions
+        // Create PlacedNeutralSprite objects with randomized positions
         const placedNeutralList: PlacedNeutralSprite[] = neutralPositions
           .filter((pos) => pos.spriteIndex < neutralSpriteList.length)
-          .map((pos, index) => ({
-            id: index,
-            spriteId: pos.spriteIndex,
-            x: pos.x,
-            y: pos.y,
-          }));
+          .map((pos, index) => {
+            const randPos = randomPosition();
+            return {
+              id: index,
+              spriteId: pos.spriteIndex,
+              x: randPos.x,
+              y: randPos.y,
+            };
+          });
 
         setSprites(dogSprites);
         setHiddenDogs(hidden);
